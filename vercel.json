@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "build/web/**",
+      "src": "build.sh",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "build/web"
@@ -10,6 +10,10 @@
     }
   ],
   "routes": [
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "/index.html"

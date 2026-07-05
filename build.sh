@@ -1,21 +1,21 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-echo "🚀 Installing Flutter..."
+export FLUTTER_ROOT="$HOME/flutter"
+export PATH="$FLUTTER_ROOT/bin:$PATH"
 
-# Clone Flutter (CORRECTED)
-git clone https://github.com/flutter/flutter.git --depth 1 -b stable
+if [ ! -d "$FLUTTER_ROOT" ]; then
+  echo "🚀 Installing Flutter..."
+  git clone https://github.com/flutter/flutter.git --depth 1 -b stable "$FLUTTER_ROOT"
+else
+  echo "Flutter already installed."
+fi
 
-# Add Flutter to PATH
-export PATH="$PATH:`pwd`/flutter/bin"
-
-# Enable web support
+flutter --version
+flutter config --no-analytics
 flutter config --enable-web
-
-# Get dependencies
 flutter pub get
 
-# Build the web app
 echo "🔨 Building Flutter web app..."
 flutter build web --release --base-href "/"
 
