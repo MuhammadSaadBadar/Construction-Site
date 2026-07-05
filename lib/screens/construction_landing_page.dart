@@ -115,9 +115,29 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     );
   }
 
+  // Helper to check if screen is mobile
+  bool _isMobile(BuildContext context) {
+    return MediaQuery.of(context).size.width < 600;
+  }
+
+  bool _isTablet(BuildContext context) {
+    return MediaQuery.of(context).size.width >= 600 &&
+        MediaQuery.of(context).size.width < 900;
+  }
+
+  int _getGridCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width < 600) return 1; // Mobile: 1 column
+    if (width < 900) return 2; // Tablet: 2 columns
+    return 4; // Desktop: 4 columns
+  }
+
   Widget _buildHeroSection() {
+    final isMobile = _isMobile(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
-      height: 800,
+      height: isMobile ? 600 : 800, // Reduced height for mobile
       width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -131,56 +151,57 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
         decoration: const BoxDecoration(color: Color.fromRGBO(13, 14, 15, 0.8)),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
               children: [
-                const NavigationBar(),
+                NavigationBar(),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text(
+                        Text(
                           'Crafting Excellence in Every Square Foot.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 48,
+                            fontSize: isMobile ? 28 : 48, // Smaller on mobile
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                             height: 1.1,
                             letterSpacing: -0.02,
                           ),
                         ),
-                        const SizedBox(height: 24),
-                        const Text(
+                        const SizedBox(height: 16),
+                        Text(
                           'Premium renovation and construction services for residential and commercial spaces. Engineered for legacy, built for today.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: 18,
-                            color: Color(0xFFE3BFB2),
+                            fontSize: isMobile ? 14 : 18, // Smaller on mobile
+                            color: const Color(0xFFE3BFB2),
                             height: 1.6,
                           ),
                         ),
-                        const SizedBox(height: 36),
+                        const SizedBox(height: 24),
                         Wrap(
-                          spacing: 16,
-                          runSpacing: 16,
+                          spacing: 12,
+                          runSpacing: 12,
                           alignment: WrapAlignment.center,
                           children: [
                             ElevatedButton(
-                              onPressed: () {
-                                // Scroll to contact section
-                              },
+                              onPressed: () {},
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFF95E14),
                                 foregroundColor: const Color(0xFF4F1700),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 16,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isMobile ? 16 : 24,
+                                  vertical: isMobile ? 12 : 16,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(6),
+                                ),
+                                textStyle: TextStyle(
+                                  fontSize: isMobile ? 14 : 16,
                                 ),
                               ),
                               child: const Text('Get a Free Quote'),
@@ -192,12 +213,15 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                                 side: const BorderSide(
                                   color: Color(0xFFAA8A7E),
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 16,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isMobile ? 16 : 24,
+                                  vertical: isMobile ? 12 : 16,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(6),
+                                ),
+                                textStyle: TextStyle(
+                                  fontSize: isMobile ? 14 : 16,
                                 ),
                               ),
                               child: const Text('View Our Projects'),
@@ -217,69 +241,63 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
   }
 
   Widget _buildAboutSection() {
+    final isMobile = _isMobile(context);
+    final isTablet = _isTablet(context);
+
     return Container(
       color: const Color(0xFF121414),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth >= 900;
-          return Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 24,
+        vertical: isMobile ? 40 : 80,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'The Architecture of Trust',
+            style: TextStyle(
+              color: const Color(0xFFFFB59A),
+              fontSize: isMobile ? 24 : 32,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'For over two decades, SUFIAN GROUP has redefined the landscape of high-end construction and renovation. We merge uncompromising craftsmanship with reliable innovation to deliver spaces that are as structurally sound as they are visually breathtaking.',
+            style: TextStyle(
+              color: const Color(0xFFE3BFB2),
+              fontSize: isMobile ? 14 : 18,
+              height: 1.6,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'The Architecture of Trust',
-                      style: TextStyle(
-                        color: Color(0xFFFFB59A),
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'For over two decades, SUFIAN GROUP has redefined the landscape of high-end construction and renovation. We merge uncompromising craftsmanship with reliable innovation to deliver spaces that are as structurally sound as they are visually breathtaking.',
-                      style: TextStyle(
-                        color: Color(0xFFE3BFB2),
-                        fontSize: 18,
-                        height: 1.6,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Wrap(
-                      spacing: 24,
-                      runSpacing: 16,
-                      children: [
-                        _statCard('20+', 'Years of Craftsmanship'),
-                        _statCard('150+', 'Projects Completed'),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              if (isWide) ...[
-                const SizedBox(width: 32),
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      'https://lh3.googleusercontent.com/aida-public/AB6AXuAb-xlUz9d7o1nCM3Q9ABh_dBXG2P9YFvpGMYvZYjRUiXlVGUdt0vCcNvLya4bYITXDs_8dzCld3kS76j4O4JZOTqkgrw60w3CwZFNpHzMqR72qBdqLWsn3BPUVp3-lrMnrvvmrYaQSHYKOfsfLSNK0alYoRlB5HIiRMPw1J9BA98yupSByvBgScX438oGC596HYYfqgrkO1BFkpHRkTY67GiERzwD7FelYUSt1LOk_2gQjAIanOIWN8A',
-                      height: 520,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ],
+              _statCard('20+', 'Years of Craftsmanship'),
+              _statCard('150+', 'Projects Completed'),
             ],
-          );
-        },
+          ),
+          if (!isMobile) ...[
+            const SizedBox(height: 32),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                'https://lh3.googleusercontent.com/aida-public/AB6AXuAb-xlUz9d7o1nCM3Q9ABh_dBXG2P9YFvpGMYvZYjRUiXlVGUdt0vCcNvLya4bYITXDs_8dzCld3kS76j4O4JZOTqkgrw60w3CwZFNpHzMqR72qBdqLWsn3BPUVp3-lrMnrvvmrYaQSHYKOfsfLSNK0alYoRlB5HIiRMPw1J9BA98yupSByvBgScX438oGC596HYYfqgrkO1BFkpHRkTY67GiERzwD7FelYUSt1LOk_2gQjAIanOIWN8A',
+                height: isTablet ? 300 : 400,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
 
   Widget _buildServicesSection() {
+    final isMobile = _isMobile(context);
+
     final services = [
       _ServiceCard(
         icon: Icons.cleaning_services,
@@ -308,7 +326,6 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     ];
 
     return Container(
-      height: 600,
       width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -320,32 +337,38 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
         decoration: BoxDecoration(
           color: const Color(0xFF0D0E0F).withOpacity(0.6),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+        padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 16 : 24,
+          vertical: isMobile ? 40 : 80,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Our Services',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 32,
+                fontSize: isMobile ? 24 : 32,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 12),
-            const Text(
+            const SizedBox(height: 8),
+            Text(
               'Precision execution across every phase of the build cycle.',
-              style: TextStyle(color: Color(0xFFE3BFB2), fontSize: 18),
+              style: TextStyle(
+                color: const Color(0xFFE3BFB2),
+                fontSize: isMobile ? 14 : 18,
+              ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.05,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: _getGridCrossAxisCount(context),
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: isMobile ? 1.2 : 1.05,
               ),
               itemCount: services.length,
               itemBuilder: (context, index) => services[index],
@@ -357,6 +380,8 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
   }
 
   Widget _buildProjectsSection() {
+    final isMobile = _isMobile(context);
+
     final projects = [
       _ProjectCard(
         title: 'Luxury Residential Renovation',
@@ -386,32 +411,38 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
 
     return Container(
       color: const Color(0xFF121414),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 24,
+        vertical: isMobile ? 40 : 80,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Our Projects',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 32,
+              fontSize: isMobile ? 24 : 32,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 12),
-          const Text(
+          const SizedBox(height: 8),
+          Text(
             'Showcase of our finest construction and renovation work.',
-            style: TextStyle(color: Color(0xFFE3BFB2), fontSize: 18),
+            style: TextStyle(
+              color: const Color(0xFFE3BFB2),
+              fontSize: isMobile ? 14 : 18,
+            ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 24),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.0,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: _getGridCrossAxisCount(context),
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: isMobile ? 0.9 : 1.0,
             ),
             itemCount: projects.length,
             itemBuilder: (context, index) => projects[index],
@@ -422,6 +453,8 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
   }
 
   Widget _buildProcessSection() {
+    final isMobile = _isMobile(context);
+
     final steps = [
       _ProcessStep(
         number: '01',
@@ -450,7 +483,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     ];
 
     return Container(
-      constraints: const BoxConstraints(minHeight: 600),
+      constraints: BoxConstraints(minHeight: isMobile ? 400 : 600),
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/our_projects.jpeg'),
@@ -461,26 +494,32 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
         decoration: BoxDecoration(
           color: const Color(0xFF121414).withOpacity(0.7),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+        padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 16 : 24,
+          vertical: isMobile ? 40 : 80,
+        ),
         child: Column(
           children: [
-            const Text(
+            Text(
               'Our Process',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 32,
+                fontSize: isMobile ? 24 : 32,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 12),
-            const Text(
+            const SizedBox(height: 8),
+            Text(
               'A systematic approach to flawless delivery.',
-              style: TextStyle(color: Color(0xFFE3BFB2), fontSize: 18),
+              style: TextStyle(
+                color: const Color(0xFFE3BFB2),
+                fontSize: isMobile ? 14 : 18,
+              ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
             ...steps.map(
               (step) => Padding(
-                padding: const EdgeInsets.only(bottom: 24),
+                padding: const EdgeInsets.only(bottom: 20),
                 child: step,
               ),
             ),
@@ -491,138 +530,90 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
   }
 
   Widget _buildContactSection() {
+    final isMobile = _isMobile(context);
+
     return Container(
       color: const Color(0xFF0D0E0F),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth >= 1000;
-          return isWide
-              ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Get Your Quote Today',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 32,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          const Text(
-                            'Transform your vision into reality. Reach out to our team of experts and let\'s discuss your next project. We\'re here to answer all your questions about construction, renovation, and design.',
-                            style: TextStyle(
-                              color: Color(0xFFE3BFB2),
-                              fontSize: 16,
-                              height: 1.6,
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          _buildContactForm(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 48),
-                    Expanded(
-                      child: Container(
-                        height: 400,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF121414),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.1),
-                          ),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=500&h=600&fit=crop',
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Get Your Quote Today',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Transform your vision into reality. Reach out to our team of experts and let\'s discuss your next project. We\'re here to answer all your questions about construction, renovation, and design.',
-                      style: TextStyle(
-                        color: Color(0xFFE3BFB2),
-                        fontSize: 16,
-                        height: 1.6,
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    _buildContactForm(),
-                    const SizedBox(height: 32),
-                    Container(
-                      height: 300,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF121414),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.1),
-                        ),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=500&h=600&fit=crop',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-        },
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 24,
+        vertical: isMobile ? 40 : 80,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Get Your Quote Today',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: isMobile ? 24 : 32,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Transform your vision into reality. Reach out to our team of experts and let\'s discuss your next project. We\'re here to answer all your questions about construction, renovation, and design.',
+            style: TextStyle(
+              color: const Color(0xFFE3BFB2),
+              fontSize: isMobile ? 14 : 16,
+              height: 1.6,
+            ),
+          ),
+          const SizedBox(height: 24),
+          _buildContactForm(),
+          if (!isMobile) ...[
+            const SizedBox(height: 32),
+            Container(
+              height: 300,
+              decoration: BoxDecoration(
+                color: const Color(0xFF121414),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=500&h=600&fit=crop',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
 
-  // ✅ FIXED: Now accepts and uses controllers
   Widget _buildContactInput(
     String label,
     String hint,
     TextEditingController controller, {
     int minLines = 1,
   }) {
+    final isMobile = _isMobile(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 14,
+            fontSize: isMobile ? 13 : 14,
             fontWeight: FontWeight.w500,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         TextField(
-          controller: controller, // ✅ Now connected!
+          controller: controller,
           minLines: minLines,
           maxLines: minLines == 1 ? 1 : null,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: Colors.white, fontSize: isMobile ? 14 : 16),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: const TextStyle(color: Color(0xFF717171)),
+            hintStyle: TextStyle(
+              color: const Color(0xFF717171),
+              fontSize: isMobile ? 13 : 14,
+            ),
             filled: true,
             fillColor: const Color(0xFF1E2020),
             border: OutlineInputBorder(
@@ -644,8 +635,9 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     );
   }
 
-  // ✅ FIXED: Now passes controllers and connects the send function
   Widget _buildContactForm() {
+    final isMobile = _isMobile(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -654,93 +646,70 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
           'Enter your full name',
           _nameController,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         _buildContactInput(
           'Your Email',
           'Enter your email address',
           _emailController,
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 14),
         _buildContactInput(
           'Your Question',
           'Tell us about your project',
           _messageController,
           minLines: 4,
         ),
-        const SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: _isSending
-              ? null
-              : _sendMessageToEmailJS, // ✅ Now connected!
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFF95E14),
-            foregroundColor: const Color(0xFF4F1700),
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
+        const SizedBox(height: 20),
+        SizedBox(
+          width: isMobile ? double.infinity : null,
+          child: ElevatedButton(
+            onPressed: _isSending ? null : _sendMessageToEmailJS,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFF95E14),
+              foregroundColor: const Color(0xFF4F1700),
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 0 : 32,
+                vertical: 14,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              textStyle: TextStyle(fontSize: isMobile ? 14 : 16),
+              minimumSize: isMobile ? const Size(double.infinity, 0) : null,
             ),
+            child: _isSending
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Color(0xFF4F1700),
+                    ),
+                  )
+                : const Text('Send Message'),
           ),
-          child: _isSending
-              ? const SizedBox(
-                  height: 20,
-                  width: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Color(0xFF4F1700),
-                  ),
-                )
-              : const Text('Send Message'),
         ),
       ],
     );
   }
 
   Widget _buildFooter() {
+    final isMobile = _isMobile(context);
+
     return Container(
       color: const Color(0xFF0D0E0F),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth >= 900;
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (isWide)
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'SUFIAN GROUP',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          'Premium construction & renovation\nsolutions for every project.',
-                          style: TextStyle(
-                            color: Color(0xFFBAB8B7),
-                            fontSize: 14,
-                            height: 1.6,
-                          ),
-                        ),
-                      ],
-                    ),
-                    _footerLinks(['Residential', 'Commercial', 'Industrial']),
-                    _footerLinks([
-                      'Privacy Policy',
-                      'Terms of Service',
-                      'Contact',
-                    ]),
-                  ],
-                )
-              else
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 24,
+        vertical: isMobile ? 40 : 80,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (!isMobile)
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -754,45 +723,71 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                     ),
                     const SizedBox(height: 12),
                     const Text(
-                      'Premium construction & renovation solutions for every project.',
+                      'Premium construction & renovation\nsolutions for every project.',
                       style: TextStyle(
                         color: Color(0xFFBAB8B7),
                         fontSize: 14,
                         height: 1.6,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    _footerLinks(['Residential', 'Commercial', 'Industrial']),
-                    const SizedBox(height: 16),
-                    _footerLinks([
-                      'Privacy Policy',
-                      'Terms of Service',
-                      'Contact',
-                    ]),
                   ],
                 ),
-              const SizedBox(height: 48),
-              Container(
-                height: 1,
-                width: double.infinity,
-                color: Colors.white.withOpacity(0.1),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                '© 2024 SUFIAN GROUP Construction Firm. All rights reserved.',
-                style: TextStyle(color: Color(0xFF717171), fontSize: 12),
-              ),
-            ],
-          );
-        },
+                _footerLinks(['Residential', 'Commercial', 'Industrial']),
+                _footerLinks(['Privacy Policy', 'Terms of Service', 'Contact']),
+              ],
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'SUFIAN GROUP',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Premium construction & renovation solutions for every project.',
+                  style: TextStyle(
+                    color: Color(0xFFBAB8B7),
+                    fontSize: 13,
+                    height: 1.6,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _footerLinks(['Residential', 'Commercial', 'Industrial']),
+                const SizedBox(height: 12),
+                _footerLinks(['Privacy Policy', 'Terms of Service', 'Contact']),
+              ],
+            ),
+          const SizedBox(height: 32),
+          Container(
+            height: 1,
+            width: double.infinity,
+            color: Colors.white.withOpacity(0.1),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '© 2024 SUFIAN GROUP Construction Firm. All rights reserved.',
+            style: TextStyle(
+              color: const Color(0xFF717171),
+              fontSize: isMobile ? 11 : 12,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _statCard(String value, String label) {
+    final isMobile = _isMobile(context);
+
     return Container(
-      width: 180,
-      padding: const EdgeInsets.only(left: 16),
+      width: isMobile ? 140 : 180,
+      padding: const EdgeInsets.only(left: 14),
       decoration: const BoxDecoration(
         border: Border(left: BorderSide(color: Color(0xFFFFB59A), width: 2)),
       ),
@@ -801,16 +796,19 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
         children: [
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 28,
+              fontSize: isMobile ? 22 : 28,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             label,
-            style: const TextStyle(color: Color(0xFFE3BFB2), fontSize: 14),
+            style: TextStyle(
+              color: const Color(0xFFE3BFB2),
+              fontSize: isMobile ? 12 : 14,
+            ),
           ),
         ],
       ),
@@ -823,10 +821,10 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
       children: items
           .map(
             (item) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.only(bottom: 10),
               child: Text(
                 item,
-                style: const TextStyle(color: Color(0xFFBAB8B7), fontSize: 14),
+                style: const TextStyle(color: Color(0xFFBAB8B7), fontSize: 13),
               ),
             ),
           )
@@ -835,92 +833,160 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
   }
 }
 
-class NavigationBar extends StatelessWidget {
+// ========== UPDATED NavigationBar with Hamburger Menu ==========
+class NavigationBar extends StatefulWidget {
   const NavigationBar({super.key});
 
   @override
+  State<NavigationBar> createState() => _NavigationBarState();
+}
+
+class _NavigationBarState extends State<NavigationBar> {
+  bool _isMenuOpen = false;
+
+  @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'SUFIAN GROUP',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                letterSpacing: -0.5,
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'SUFIAN GROUP',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.5,
+                ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Wrap(
-                      spacing: 32,
+              if (isMobile)
+                IconButton(
+                  icon: Icon(
+                    _isMenuOpen ? Icons.close : Icons.menu,
+                    color: Colors.white,
+                    size: 28,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _isMenuOpen = !_isMenuOpen;
+                    });
+                  },
+                ),
+              if (!isMobile)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
-                        Text(
-                          'Projects',
-                          style: TextStyle(
-                            color: Color(0xFFE3BFB2),
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          'Services',
-                          style: TextStyle(
-                            color: Color(0xFFE3BFB2),
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          'Process',
-                          style: TextStyle(
-                            color: Color(0xFFE3BFB2),
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          'About',
-                          style: TextStyle(
-                            color: Color(0xFFE3BFB2),
-                            fontSize: 14,
-                          ),
-                        ),
+                        NavLink('Projects'),
+                        NavLink('Services'),
+                        NavLink('Process'),
+                        NavLink('About'),
                       ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFF95E14), width: 1.5),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: const Text(
-                'Contact Us',
-                style: TextStyle(
-                  color: Color(0xFFF95E14),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+              if (!isMobile)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFFF95E14),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text(
+                    'Contact Us',
+                    style: TextStyle(
+                      color: Color(0xFFF95E14),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
-              ),
+            ],
+          ),
+        ),
+        // Mobile Menu Dropdown
+        if (isMobile && _isMenuOpen)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1A1C1C),
+              borderRadius: BorderRadius.circular(8),
             ),
-          ],
+            child: Column(
+              children: [
+                const NavLink('Projects', isMobile: true),
+                const NavLink('Services', isMobile: true),
+                const NavLink('Process', isMobile: true),
+                const NavLink('About', isMobile: true),
+                const SizedBox(height: 12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFFF95E14),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text(
+                    'Contact Us',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Color(0xFFF95E14),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class NavLink extends StatelessWidget {
+  final String title;
+  final bool isMobile;
+
+  const NavLink(this.title, {super.key, this.isMobile = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 12 : 0,
+        horizontal: isMobile ? 8 : 0,
+      ),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: const Color(0xFFE3BFB2),
+          fontSize: isMobile ? 16 : 14,
+          fontWeight: isMobile ? FontWeight.w500 : FontWeight.normal,
         ),
       ),
     );
   }
 }
 
+// ========== UPDATED ServiceCard with Responsive ==========
 class _ServiceCard extends StatelessWidget {
   const _ServiceCard({
     required this.icon,
@@ -934,8 +1000,10 @@ class _ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isMobile ? 16 : 24),
       decoration: BoxDecoration(
         color: const Color(0xFF121414),
         borderRadius: BorderRadius.circular(12),
@@ -944,20 +1012,24 @@ class _ServiceCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: const Color(0xFFFFB59A), size: 40),
-          const SizedBox(height: 20),
+          Icon(icon, color: const Color(0xFFFFB59A), size: isMobile ? 32 : 40),
+          SizedBox(height: isMobile ? 12 : 20),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 20,
+              fontSize: isMobile ? 16 : 20,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: isMobile ? 6 : 10),
           Text(
             description,
-            style: const TextStyle(color: Color(0xFFE3BFB2), height: 1.6),
+            style: TextStyle(
+              color: const Color(0xFFE3BFB2),
+              fontSize: isMobile ? 12 : 14,
+              height: 1.6,
+            ),
           ),
         ],
       ),
@@ -965,6 +1037,7 @@ class _ServiceCard extends StatelessWidget {
   }
 }
 
+// ========== UPDATED ProcessStep with Responsive ==========
 class _ProcessStep extends StatelessWidget {
   const _ProcessStep({
     required this.number,
@@ -978,44 +1051,50 @@ class _ProcessStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 72,
-          height: 72,
+          width: isMobile ? 50 : 72,
+          height: isMobile ? 50 : 72,
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: const Color(0xFF1E2020),
-            borderRadius: BorderRadius.circular(36),
+            borderRadius: BorderRadius.circular(isMobile ? 25 : 36),
             border: Border.all(color: const Color(0xFFFFB59A).withOpacity(0.3)),
           ),
           child: Text(
             number,
-            style: const TextStyle(
-              color: Color(0xFFFFB59A),
-              fontSize: 22,
+            style: TextStyle(
+              color: const Color(0xFFFFB59A),
+              fontSize: isMobile ? 16 : 22,
               fontWeight: FontWeight.w700,
             ),
           ),
         ),
-        const SizedBox(width: 20),
+        SizedBox(width: isMobile ? 12 : 20),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: isMobile ? 16 : 20,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: isMobile ? 4 : 8),
               Text(
                 description,
-                style: const TextStyle(color: Color(0xFFE3BFB2), height: 1.6),
+                style: TextStyle(
+                  color: const Color(0xFFE3BFB2),
+                  fontSize: isMobile ? 13 : 15,
+                  height: 1.6,
+                ),
               ),
             ],
           ),
@@ -1025,6 +1104,7 @@ class _ProcessStep extends StatelessWidget {
   }
 }
 
+// ========== UPDATED ProjectCard with Responsive ==========
 class _ProjectCard extends StatelessWidget {
   const _ProjectCard({
     required this.title,
@@ -1038,6 +1118,8 @@ class _ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -1056,7 +1138,7 @@ class _ProjectCard extends StatelessWidget {
             ],
           ),
         ),
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(isMobile ? 12 : 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -1069,19 +1151,19 @@ class _ProjectCard extends StatelessWidget {
               ),
               child: Text(
                 category,
-                style: const TextStyle(
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 12,
+                  fontSize: isMobile ? 10 : 12,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: isMobile ? 6 : 8),
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: isMobile ? 14 : 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
