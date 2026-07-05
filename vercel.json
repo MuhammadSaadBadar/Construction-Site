@@ -1,22 +1,10 @@
 {
-  "version": 2,
-  "builds": [
+  "buildCommand": "bash build.sh",
+  "outputDirectory": "build/web",
+  "rewrites": [
     {
-      "src": "build.sh",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build/web"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
