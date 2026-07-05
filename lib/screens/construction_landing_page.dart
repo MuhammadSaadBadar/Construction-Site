@@ -115,11 +115,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     );
   }
 
-  // ===================== RESPONSIVE HELPERS =====================
-  // Kept the same 3-tier system, but these are now only used for
-  // spacing/typography decisions. Grid column counts are handled by
-  // SliverGridDelegateWithMaxCrossAxisExtent instead of a manual
-  // breakpoint switch, so they never get "squeezed" at edge widths.
+  // Helper to check if screen is mobile
   bool _isMobile(BuildContext context) {
     return MediaQuery.of(context).size.width < 600;
   }
@@ -129,11 +125,23 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
         MediaQuery.of(context).size.width < 900;
   }
 
+  // IMPROVED: Better grid column calculation for different screen sizes
+  int _getGridCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width < 600) return 1; // Mobile: 1 column
+    if (width < 900) return 2; // Tablet: 2 columns
+    if (width < 1200) return 3; // Small desktop: 3 columns
+    return 4; // Large desktop: 4 columns
+  }
+
   Widget _buildHeroSection() {
     final isMobile = _isMobile(context);
+    final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      height: isMobile ? 600 : 800, // Reduced height for mobile
+      constraints: BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height,
+      ),
       width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -147,13 +155,18 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
         decoration: const BoxDecoration(color: Color.fromRGBO(13, 14, 15, 0.8)),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 16 : 24,
+              vertical: isMobile ? 8 : 12,
+            ),
             child: Column(
               children: [
                 const NavigationBar(),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 8 : 16,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -161,7 +174,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                           'Crafting Excellence in Every Square Foot.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: isMobile ? 28 : 48, // Smaller on mobile
+                            fontSize: isMobile ? 28 : 48,
                             fontWeight: FontWeight.w700,
                             color: Colors.white,
                             height: 1.1,
@@ -173,57 +186,101 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                           'Premium renovation and construction services for residential and commercial spaces. Engineered for legacy, built for today.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontSize: isMobile ? 14 : 18, // Smaller on mobile
+                            fontSize: isMobile ? 14 : 18,
                             color: const Color(0xFFE3BFB2),
                             height: 1.6,
                           ),
                         ),
                         const SizedBox(height: 24),
-                        Wrap(
-                          spacing: 12,
-                          runSpacing: 12,
-                          alignment: WrapAlignment.center,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFFF95E14),
-                                foregroundColor: const Color(0xFF4F1700),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: isMobile ? 16 : 24,
-                                  vertical: isMobile ? 12 : 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                textStyle: TextStyle(
-                                  fontSize: isMobile ? 14 : 16,
-                                ),
-                              ),
-                              child: const Text('Get a Free Quote'),
-                            ),
-                            OutlinedButton(
-                              onPressed: () {},
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                side: const BorderSide(
-                                  color: Color(0xFFAA8A7E),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: isMobile ? 16 : 24,
-                                  vertical: isMobile ? 12 : 16,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                textStyle: TextStyle(
-                                  fontSize: isMobile ? 14 : 16,
+                        // IMPROVED: Using Column for mobile instead of Wrap for better control
+                        if (isMobile)
+                          Column(
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFF95E14),
+                                    foregroundColor: const Color(0xFF4F1700),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    textStyle: const TextStyle(fontSize: 14),
+                                  ),
+                                  child: const Text('Get a Free Quote'),
                                 ),
                               ),
-                              child: const Text('View Our Projects'),
-                            ),
-                          ],
-                        ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton(
+                                  onPressed: () {},
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: Colors.white,
+                                    side: const BorderSide(
+                                      color: Color(0xFFAA8A7E),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 24,
+                                      vertical: 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    textStyle: const TextStyle(fontSize: 14),
+                                  ),
+                                  child: const Text('View Our Projects'),
+                                ),
+                              ),
+                            ],
+                          )
+                        else
+                          Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            alignment: WrapAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFF95E14),
+                                  foregroundColor: const Color(0xFF4F1700),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  textStyle: const TextStyle(fontSize: 16),
+                                ),
+                                child: const Text('Get a Free Quote'),
+                              ),
+                              OutlinedButton(
+                                onPressed: () {},
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  side: const BorderSide(
+                                    color: Color(0xFFAA8A7E),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 24,
+                                    vertical: 16,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  textStyle: const TextStyle(fontSize: 16),
+                                ),
+                                child: const Text('View Our Projects'),
+                              ),
+                            ],
+                          ),
                       ],
                     ),
                   ),
@@ -267,14 +324,24 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
             ),
           ),
           const SizedBox(height: 24),
-          Wrap(
-            spacing: 16,
-            runSpacing: 16,
-            children: [
-              _statCard('20+', 'Years of Craftsmanship'),
-              _statCard('150+', 'Projects Completed'),
-            ],
-          ),
+          // IMPROVED: Better stat cards layout for mobile
+          if (isMobile)
+            Column(
+              children: [
+                _statCard('20+', 'Years of Craftsmanship'),
+                const SizedBox(height: 16),
+                _statCard('150+', 'Projects Completed'),
+              ],
+            )
+          else
+            Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                _statCard('20+', 'Years of Craftsmanship'),
+                _statCard('150+', 'Projects Completed'),
+              ],
+            ),
           if (!isMobile) ...[
             const SizedBox(height: 32),
             ClipRRect(
@@ -282,6 +349,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
               child: Image.network(
                 'https://lh3.googleusercontent.com/aida-public/AB6AXuAb-xlUz9d7o1nCM3Q9ABh_dBXG2P9YFvpGMYvZYjRUiXlVGUdt0vCcNvLya4bYITXDs_8dzCld3kS76j4O4JZOTqkgrw60w3CwZFNpHzMqR72qBdqLWsn3BPUVp3-lrMnrvvmrYaQSHYKOfsfLSNK0alYoRlB5HIiRMPw1J9BA98yupSByvBgScX438oGC596HYYfqgrkO1BFkpHRkTY67GiERzwD7FelYUSt1LOk_2gQjAIanOIWN8A',
                 height: isTablet ? 300 : 400,
+                width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
@@ -293,6 +361,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
 
   Widget _buildServicesSection() {
     final isMobile = _isMobile(context);
+    final gridCount = _getGridCrossAxisCount(context);
 
     final services = [
       _ServiceCard(
@@ -357,18 +426,20 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
               ),
             ),
             const SizedBox(height: 24),
-            // FIX: MaxCrossAxisExtent auto-computes how many columns fit
-            // (min 240px per card) instead of a hardcoded crossAxisCount.
-            // This removes the "4 columns forced into too-narrow space"
-            // bug you saw around 900-1100px screen widths.
+            // IMPROVED: Better aspect ratio for mobile to prevent thin columns
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 240,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: gridCount,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                mainAxisExtent: 230,
+                // IMPROVED: Adjusted aspect ratio - more square on mobile, wider on desktop
+                childAspectRatio: isMobile
+                    ? 1.0 // Square cards on mobile
+                    : gridCount == 2
+                    ? 1.15
+                    : 1.05,
               ),
               itemCount: services.length,
               itemBuilder: (context, index) => services[index],
@@ -381,6 +452,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
 
   Widget _buildProjectsSection() {
     final isMobile = _isMobile(context);
+    final gridCount = _getGridCrossAxisCount(context);
 
     final projects = [
       _ProjectCard(
@@ -435,15 +507,20 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
             ),
           ),
           const SizedBox(height: 24),
-          // FIX: same MaxCrossAxisExtent approach as services grid.
+          // IMPROVED: Better aspect ratio and layout for project cards
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 260,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: gridCount,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              mainAxisExtent: 260,
+              // IMPROVED: Landscape aspect ratio for project cards, more square on mobile
+              childAspectRatio: isMobile
+                  ? 1.2 // 6:5 ratio on mobile - wider than tall
+                  : gridCount == 2
+                  ? 1.4
+                  : 1.0,
             ),
             itemCount: projects.length,
             itemBuilder: (context, index) => projects[index],
@@ -565,6 +642,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
             const SizedBox(height: 32),
             Container(
               height: 300,
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: const Color(0xFF121414),
                 borderRadius: BorderRadius.circular(12),
@@ -711,27 +789,29 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'SUFIAN GROUP',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w700,
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'SUFIAN GROUP',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Premium construction & renovation\nsolutions for every project.',
-                      style: TextStyle(
-                        color: Color(0xFFBAB8B7),
-                        fontSize: 14,
-                        height: 1.6,
+                      SizedBox(height: 12),
+                      Text(
+                        'Premium construction & renovation\nsolutions for every project.',
+                        style: TextStyle(
+                          color: Color(0xFFBAB8B7),
+                          fontSize: 14,
+                          height: 1.6,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 _footerLinks(['Residential', 'Commercial', 'Industrial']),
                 _footerLinks(['Privacy Policy', 'Terms of Service', 'Contact']),
@@ -787,7 +867,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     final isMobile = _isMobile(context);
 
     return Container(
-      width: isMobile ? 140 : 180,
+      width: isMobile ? double.infinity : 180,
       padding: const EdgeInsets.only(left: 14),
       decoration: const BoxDecoration(
         border: Border(left: BorderSide(color: Color(0xFFFFB59A), width: 2)),
@@ -834,13 +914,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
   }
 }
 
-// ========== FIXED NavigationBar ==========
-// The old breakpoint (600px) switched to the full desktop nav row far too
-// early: nav links + "Contact Us" button don't actually fit until ~900px,
-// so anything between 600-900px overflowed and visually overlapped
-// ("Contact Us" box sitting on top of "Process"/"About").
-// Fix: use 900px as the switch point, matching the rest of the page's
-// "tablet" tier, and use a hamburger menu for everything below that.
+// IMPROVED: Better Navigation Bar with proper hamburger menu
 class NavigationBar extends StatefulWidget {
   const NavigationBar({super.key});
 
@@ -851,17 +925,16 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar> {
   bool _isMenuOpen = false;
 
-  static const double _navBreakpoint = 900;
-
   @override
   Widget build(BuildContext context) {
-    final isCompact = MediaQuery.of(context).size.width < _navBreakpoint;
+    final isMobile = MediaQuery.of(context).size.width < 600;
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-          child: Row(
+    return Container(
+      // IMPROVED: Added container with padding for better mobile navigation
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 8 : 16, vertical: 8),
+      child: Column(
+        children: [
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text(
@@ -873,7 +946,7 @@ class _NavigationBarState extends State<NavigationBar> {
                   letterSpacing: -0.5,
                 ),
               ),
-              if (isCompact)
+              if (isMobile)
                 IconButton(
                   icon: Icon(
                     _isMenuOpen ? Icons.close : Icons.menu,
@@ -886,7 +959,7 @@ class _NavigationBarState extends State<NavigationBar> {
                     });
                   },
                 ),
-              if (!isCompact)
+              if (!isMobile)
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -894,17 +967,14 @@ class _NavigationBarState extends State<NavigationBar> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         NavLink('Projects'),
-                        SizedBox(width: 24),
                         NavLink('Services'),
-                        SizedBox(width: 24),
                         NavLink('Process'),
-                        SizedBox(width: 24),
                         NavLink('About'),
                       ],
                     ),
                   ),
                 ),
-              if (!isCompact)
+              if (!isMobile)
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -928,47 +998,87 @@ class _NavigationBarState extends State<NavigationBar> {
                 ),
             ],
           ),
-        ),
-        // Mobile / tablet menu dropdown
-        if (isCompact && _isMenuOpen)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A1C1C),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              children: [
-                const NavLink('Projects', isMobile: true),
-                const NavLink('Services', isMobile: true),
-                const NavLink('Process', isMobile: true),
-                const NavLink('About', isMobile: true),
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: const Color(0xFFF95E14),
-                      width: 1.5,
-                    ),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Text(
-                    'Contact Us',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Color(0xFFF95E14),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ],
+          // IMPROVED: Animated mobile menu with better styling
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            height: isMobile && _isMenuOpen ? 280 : 0,
+            curve: Curves.easeInOut,
+            child: SingleChildScrollView(
+              child: isMobile && _isMenuOpen
+                  ? Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF1A1C1C),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          _buildMobileNavItem('Projects'),
+                          _buildMobileNavItem('Services'),
+                          _buildMobileNavItem('Process'),
+                          _buildMobileNavItem('About'),
+                          const SizedBox(height: 16),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: const Color(0xFFF95E14),
+                                width: 1.5,
+                              ),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'Contact Us',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Color(0xFFF95E14),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
           ),
-      ],
+        ],
+      ),
+    );
+  }
+
+  // IMPROVED: Better mobile nav item with tap effect
+  Widget _buildMobileNavItem(String title) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _isMenuOpen = false;
+        });
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
+          ),
+        ),
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Color(0xFFE3BFB2),
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -984,7 +1094,7 @@ class NavLink extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(
         vertical: isMobile ? 12 : 0,
-        horizontal: isMobile ? 8 : 0,
+        horizontal: isMobile ? 8 : 12,
       ),
       child: Text(
         title,
@@ -998,10 +1108,7 @@ class NavLink extends StatelessWidget {
   }
 }
 
-// ========== FIXED ServiceCard ==========
-// Description text now uses Expanded + overflow ellipsis so it can never
-// push past the fixed card height (mainAxisExtent) set by the grid
-// delegate, no matter how many words wrap.
+// IMPROVED: Better ServiceCard with responsive padding
 class _ServiceCard extends StatelessWidget {
   const _ServiceCard({
     required this.icon,
@@ -1016,9 +1123,16 @@ class _ServiceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
+    final isTablet = MediaQuery.of(context).size.width < 900;
 
     return Container(
-      padding: EdgeInsets.all(isMobile ? 16 : 24),
+      padding: EdgeInsets.all(
+        isMobile
+            ? 20
+            : isTablet
+            ? 24
+            : 28,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xFF121414),
         borderRadius: BorderRadius.circular(12),
@@ -1026,31 +1140,28 @@ class _ServiceCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: const Color(0xFFFFB59A), size: isMobile ? 32 : 40),
-          SizedBox(height: isMobile ? 12 : 20),
+          Icon(icon, color: const Color(0xFFFFB59A), size: isMobile ? 36 : 40),
+          SizedBox(height: isMobile ? 16 : 20),
           Text(
             title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white,
-              fontSize: isMobile ? 16 : 20,
+              fontSize: isMobile ? 18 : 20,
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: isMobile ? 6 : 10),
-          Flexible(
+          SizedBox(height: isMobile ? 10 : 12),
+          Expanded(
             child: Text(
               description,
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: const Color(0xFFE3BFB2),
-                fontSize: isMobile ? 12 : 14,
+                fontSize: isMobile ? 13 : 14,
                 height: 1.6,
               ),
+              overflow: TextOverflow.visible,
             ),
           ),
         ],
@@ -1059,7 +1170,7 @@ class _ServiceCard extends StatelessWidget {
   }
 }
 
-// ========== ProcessStep (unchanged) ==========
+// IMPROVED: Better ProcessStep with proper alignment
 class _ProcessStep extends StatelessWidget {
   const _ProcessStep({
     required this.number,
@@ -1075,60 +1186,63 @@ class _ProcessStep extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: isMobile ? 50 : 72,
-          height: isMobile ? 50 : 72,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E2020),
-            borderRadius: BorderRadius.circular(isMobile ? 25 : 36),
-            border: Border.all(color: const Color(0xFFFFB59A).withOpacity(0.3)),
-          ),
-          child: Text(
-            number,
-            style: TextStyle(
-              color: const Color(0xFFFFB59A),
-              fontSize: isMobile ? 16 : 22,
-              fontWeight: FontWeight.w700,
+    return Container(
+      padding: EdgeInsets.all(isMobile ? 12 : 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            width: isMobile ? 56 : 72,
+            height: isMobile ? 56 : 72,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1E2020),
+              borderRadius: BorderRadius.circular(isMobile ? 28 : 36),
+              border: Border.all(
+                color: const Color(0xFFFFB59A).withOpacity(0.3),
+              ),
+            ),
+            child: Text(
+              number,
+              style: TextStyle(
+                color: const Color(0xFFFFB59A),
+                fontSize: isMobile ? 18 : 22,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
-        ),
-        SizedBox(width: isMobile ? 12 : 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: isMobile ? 16 : 20,
-                  fontWeight: FontWeight.w600,
+          SizedBox(width: isMobile ? 16 : 20),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isMobile ? 18 : 20,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              SizedBox(height: isMobile ? 4 : 8),
-              Text(
-                description,
-                style: TextStyle(
-                  color: const Color(0xFFE3BFB2),
-                  fontSize: isMobile ? 13 : 15,
-                  height: 1.6,
+                SizedBox(height: isMobile ? 6 : 8),
+                Text(
+                  description,
+                  style: TextStyle(
+                    color: const Color(0xFFE3BFB2),
+                    fontSize: isMobile ? 14 : 15,
+                    height: 1.6,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-// ========== FIXED ProjectCard ==========
-// Added maxLines/overflow protection on the title so long project names
-// can't overflow the fixed-height grid tile.
+// IMPROVED: Better ProjectCard with minimum height
 class _ProjectCard extends StatelessWidget {
   const _ProjectCard({
     required this.title,
@@ -1145,6 +1259,8 @@ class _ProjectCard extends StatelessWidget {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
     return Container(
+      // IMPROVED: Added minimum height to prevent cards from being too thin
+      constraints: BoxConstraints(minHeight: isMobile ? 200 : 250),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.white.withOpacity(0.1)),
@@ -1162,14 +1278,13 @@ class _ProjectCard extends StatelessWidget {
             ],
           ),
         ),
-        padding: EdgeInsets.all(isMobile ? 12 : 16),
+        padding: EdgeInsets.all(isMobile ? 16 : 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
-          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
                 color: const Color(0xFFF95E14),
                 borderRadius: BorderRadius.circular(4),
@@ -1178,19 +1293,17 @@ class _ProjectCard extends StatelessWidget {
                 category,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: isMobile ? 10 : 12,
+                  fontSize: isMobile ? 11 : 12,
                   fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            SizedBox(height: isMobile ? 6 : 8),
+            SizedBox(height: isMobile ? 8 : 10),
             Text(
               title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: isMobile ? 14 : 16,
+                fontSize: isMobile ? 15 : 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
