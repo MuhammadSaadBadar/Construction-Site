@@ -115,7 +115,11 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     );
   }
 
-  // Helper to check if screen is mobile
+  // ===================== RESPONSIVE HELPERS =====================
+  // Kept the same 3-tier system, but these are now only used for
+  // spacing/typography decisions. Grid column counts are handled by
+  // SliverGridDelegateWithMaxCrossAxisExtent instead of a manual
+  // breakpoint switch, so they never get "squeezed" at edge widths.
   bool _isMobile(BuildContext context) {
     return MediaQuery.of(context).size.width < 600;
   }
@@ -125,16 +129,8 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
         MediaQuery.of(context).size.width < 900;
   }
 
-  int _getGridCrossAxisCount(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width < 600) return 1; // Mobile: 1 column
-    if (width < 900) return 2; // Tablet: 2 columns
-    return 4; // Desktop: 4 columns
-  }
-
   Widget _buildHeroSection() {
     final isMobile = _isMobile(context);
-    final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
       height: isMobile ? 600 : 800, // Reduced height for mobile
@@ -154,7 +150,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
               children: [
-                NavigationBar(),
+                const NavigationBar(),
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -361,14 +357,18 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
               ),
             ),
             const SizedBox(height: 24),
+            // FIX: MaxCrossAxisExtent auto-computes how many columns fit
+            // (min 240px per card) instead of a hardcoded crossAxisCount.
+            // This removes the "4 columns forced into too-narrow space"
+            // bug you saw around 900-1100px screen widths.
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: _getGridCrossAxisCount(context),
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 240,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: isMobile ? 1.2 : 1.05,
+                mainAxisExtent: 230,
               ),
               itemCount: services.length,
               itemBuilder: (context, index) => services[index],
@@ -435,14 +435,15 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
             ),
           ),
           const SizedBox(height: 24),
+          // FIX: same MaxCrossAxisExtent approach as services grid.
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: _getGridCrossAxisCount(context),
+            gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 260,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              childAspectRatio: isMobile ? 0.9 : 1.0,
+              mainAxisExtent: 260,
             ),
             itemCount: projects.length,
             itemBuilder: (context, index) => projects[index],
@@ -833,7 +834,13 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
   }
 }
 
-// ========== UPDATED NavigationBar with Hamburger Menu ==========
+// ========== FIXED NavigationBar ==========
+// The old breakpoint (600px) switched to the full desktop nav row far too
+// early: nav links + "Contact Us" button don't actually fit until ~900px,
+// so anything between 600-900px overflowed and visually overlapped
+// ("Contact Us" box sitting on top of "Process"/"About").
+// Fix: use 900px as the switch point, matching the rest of the page's
+// "tablet" tier, and use a hamburger menu for everything below that.
 class NavigationBar extends StatefulWidget {
   const NavigationBar({super.key});
 
@@ -844,9 +851,11 @@ class NavigationBar extends StatefulWidget {
 class _NavigationBarState extends State<NavigationBar> {
   bool _isMenuOpen = false;
 
+  static const double _navBreakpoint = 900;
+
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
+    final isCompact = MediaQuery.of(context).size.width < _navBreakpoint;
 
     return Column(
       children: [
@@ -864,7 +873,7 @@ class _NavigationBarState extends State<NavigationBar> {
                   letterSpacing: -0.5,
                 ),
               ),
-              if (isMobile)
+              if (isCompact)
                 IconButton(
                   icon: Icon(
                     _isMenuOpen ? Icons.close : Icons.menu,
@@ -877,7 +886,7 @@ class _NavigationBarState extends State<NavigationBar> {
                     });
                   },
                 ),
-              if (!isMobile)
+              if (!isCompact)
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -885,14 +894,17 @@ class _NavigationBarState extends State<NavigationBar> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: const [
                         NavLink('Projects'),
+                        SizedBox(width: 24),
                         NavLink('Services'),
+                        SizedBox(width: 24),
                         NavLink('Process'),
+                        SizedBox(width: 24),
                         NavLink('About'),
                       ],
                     ),
                   ),
                 ),
-              if (!isMobile)
+              if (!isCompact)
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -917,8 +929,8 @@ class _NavigationBarState extends State<NavigationBar> {
             ],
           ),
         ),
-        // Mobile Menu Dropdown
-        if (isMobile && _isMenuOpen)
+        // Mobile / tablet menu dropdown
+        if (isCompact && _isMenuOpen)
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -986,7 +998,10 @@ class NavLink extends StatelessWidget {
   }
 }
 
-// ========== UPDATED ServiceCard with Responsive ==========
+// ========== FIXED ServiceCard ==========
+// Description text now uses Expanded + overflow ellipsis so it can never
+// push past the fixed card height (mainAxisExtent) set by the grid
+// delegate, no matter how many words wrap.
 class _ServiceCard extends StatelessWidget {
   const _ServiceCard({
     required this.icon,
@@ -1011,11 +1026,14 @@ class _ServiceCard extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: const Color(0xFFFFB59A), size: isMobile ? 32 : 40),
           SizedBox(height: isMobile ? 12 : 20),
           Text(
             title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white,
               fontSize: isMobile ? 16 : 20,
@@ -1023,12 +1041,16 @@ class _ServiceCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: isMobile ? 6 : 10),
-          Text(
-            description,
-            style: TextStyle(
-              color: const Color(0xFFE3BFB2),
-              fontSize: isMobile ? 12 : 14,
-              height: 1.6,
+          Flexible(
+            child: Text(
+              description,
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: const Color(0xFFE3BFB2),
+                fontSize: isMobile ? 12 : 14,
+                height: 1.6,
+              ),
             ),
           ),
         ],
@@ -1037,7 +1059,7 @@ class _ServiceCard extends StatelessWidget {
   }
 }
 
-// ========== UPDATED ProcessStep with Responsive ==========
+// ========== ProcessStep (unchanged) ==========
 class _ProcessStep extends StatelessWidget {
   const _ProcessStep({
     required this.number,
@@ -1104,7 +1126,9 @@ class _ProcessStep extends StatelessWidget {
   }
 }
 
-// ========== UPDATED ProjectCard with Responsive ==========
+// ========== FIXED ProjectCard ==========
+// Added maxLines/overflow protection on the title so long project names
+// can't overflow the fixed-height grid tile.
 class _ProjectCard extends StatelessWidget {
   const _ProjectCard({
     required this.title,
@@ -1142,6 +1166,7 @@ class _ProjectCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -1161,6 +1186,8 @@ class _ProjectCard extends StatelessWidget {
             SizedBox(height: isMobile ? 6 : 8),
             Text(
               title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: isMobile ? 14 : 16,
