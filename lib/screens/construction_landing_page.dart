@@ -1,7 +1,99 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
-class ConstructionLandingPage extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+class ConstructionLandingPage extends StatefulWidget {
   const ConstructionLandingPage({super.key});
+
+  @override
+  State<ConstructionLandingPage> createState() =>
+      _ConstructionLandingPageState();
+}
+
+class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _messageController = TextEditingController();
+
+  bool _isSending = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _sendMessageToEmailJS() async {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final message = _messageController.text.trim();
+
+    final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+    if (name.isEmpty || email.isEmpty || message.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all fields.')),
+      );
+      return;
+    }
+
+    if (!emailRegex.hasMatch(email)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email.')),
+      );
+      return;
+    }
+
+    setState(() => _isSending = true);
+    try {
+      const serviceId = 'service_0ad4xgj';
+      const templateId = 'template_lswr46p';
+      const publicKey = '_LKo4eXxtb3DpJvCt';
+
+      final uri = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
+
+      final response = await http.post(
+        uri,
+        headers: {
+          'origin': 'https://localhost',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'service_id': serviceId,
+          'template_id': templateId,
+          'user_id': publicKey,
+          'template_params': {'name': name, 'email': email, 'message': message},
+        }),
+      );
+
+      if (!mounted) return;
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Message sent successfully!')),
+        );
+        _nameController.clear();
+        _emailController.clear();
+        _messageController.clear();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send message. (${response.statusCode})'),
+          ),
+        );
+      }
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Error sending message.')));
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +169,9 @@ class ConstructionLandingPage extends StatelessWidget {
                           alignment: WrapAlignment.center,
                           children: [
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                // Scroll to contact section
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(0xFFF95E14),
                                 foregroundColor: const Color(0xFF4F1700),
@@ -214,6 +308,8 @@ class ConstructionLandingPage extends StatelessWidget {
     ];
 
     return Container(
+      height: 600,
+      width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/our_services.jpeg'),
@@ -222,7 +318,7 @@ class ConstructionLandingPage extends StatelessWidget {
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: const Color(0xFF0D0E0F).withOpacity(0.85),
+          color: const Color(0xFF0D0E0F).withOpacity(0.6),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
         child: Column(
@@ -289,48 +385,38 @@ class ConstructionLandingPage extends StatelessWidget {
     ];
 
     return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('assets/our_projects.jpeg'),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF121414).withOpacity(0.9),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Our Projects',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
-                fontWeight: FontWeight.w600,
-              ),
+      color: const Color(0xFF121414),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Our Projects',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 32,
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(height: 12),
-            const Text(
-              'Showcase of our finest construction and renovation work.',
-              style: TextStyle(color: Color(0xFFE3BFB2), fontSize: 18),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            'Showcase of our finest construction and renovation work.',
+            style: TextStyle(color: Color(0xFFE3BFB2), fontSize: 18),
+          ),
+          const SizedBox(height: 32),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1.0,
             ),
-            const SizedBox(height: 32),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                childAspectRatio: 1.0,
-              ),
-              itemCount: projects.length,
-              itemBuilder: (context, index) => projects[index],
-            ),
-          ],
-        ),
+            itemCount: projects.length,
+            itemBuilder: (context, index) => projects[index],
+          ),
+        ],
       ),
     );
   }
@@ -364,31 +450,42 @@ class ConstructionLandingPage extends StatelessWidget {
     ];
 
     return Container(
-      color: const Color(0xFF121414),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
-      child: Column(
-        children: [
-          const Text(
-            'Our Process',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.w600,
+      constraints: const BoxConstraints(minHeight: 600),
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/our_projects.jpeg'),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF121414).withOpacity(0.7),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 80),
+        child: Column(
+          children: [
+            const Text(
+              'Our Process',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 32,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'A systematic approach to flawless delivery.',
-            style: TextStyle(color: Color(0xFFE3BFB2), fontSize: 18),
-          ),
-          const SizedBox(height: 40),
-          ...steps.map(
-            (step) => Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: step,
+            const SizedBox(height: 12),
+            const Text(
+              'A systematic approach to flawless delivery.',
+              style: TextStyle(color: Color(0xFFE3BFB2), fontSize: 18),
             ),
-          ),
-        ],
+            const SizedBox(height: 40),
+            ...steps.map(
+              (step) => Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: step,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -499,37 +596,13 @@ class ConstructionLandingPage extends StatelessWidget {
     );
   }
 
-  Widget _buildContactForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildContactInput('Your Name', 'Enter your full name'),
-        const SizedBox(height: 16),
-        _buildContactInput('Your Email', 'Enter your email address'),
-        const SizedBox(height: 16),
-        _buildContactInput(
-          'Your Question',
-          'Tell us about your project',
-          minLines: 4,
-        ),
-        const SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFF95E14),
-            foregroundColor: const Color(0xFF4F1700),
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(6),
-            ),
-          ),
-          child: const Text('Send Message'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildContactInput(String label, String hint, {int minLines = 1}) {
+  // ✅ FIXED: Now accepts and uses controllers
+  Widget _buildContactInput(
+    String label,
+    String hint,
+    TextEditingController controller, {
+    int minLines = 1,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -543,6 +616,7 @@ class ConstructionLandingPage extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextField(
+          controller: controller, // ✅ Now connected!
           minLines: minLines,
           maxLines: minLines == 1 ? 1 : null,
           style: const TextStyle(color: Colors.white),
@@ -565,6 +639,57 @@ class ConstructionLandingPage extends StatelessWidget {
             ),
             contentPadding: const EdgeInsets.all(12),
           ),
+        ),
+      ],
+    );
+  }
+
+  // ✅ FIXED: Now passes controllers and connects the send function
+  Widget _buildContactForm() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildContactInput(
+          'Your Name',
+          'Enter your full name',
+          _nameController,
+        ),
+        const SizedBox(height: 16),
+        _buildContactInput(
+          'Your Email',
+          'Enter your email address',
+          _emailController,
+        ),
+        const SizedBox(height: 16),
+        _buildContactInput(
+          'Your Question',
+          'Tell us about your project',
+          _messageController,
+          minLines: 4,
+        ),
+        const SizedBox(height: 24),
+        ElevatedButton(
+          onPressed: _isSending
+              ? null
+              : _sendMessageToEmailJS, // ✅ Now connected!
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFFF95E14),
+            foregroundColor: const Color(0xFF4F1700),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+          ),
+          child: _isSending
+              ? const SizedBox(
+                  height: 20,
+                  width: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Color(0xFF4F1700),
+                  ),
+                )
+              : const Text('Send Message'),
         ),
       ],
     );
