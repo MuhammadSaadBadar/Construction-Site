@@ -1,28 +1,22 @@
 #!/bin/bash
-set -euo pipefail
+set -e
 
-echo "Preparing Flutter Web build..."
+echo "🚀 Installing Flutter..."
 
-# Check if Flutter is installed
-if ! command -v flutter >/dev/null 2>&1; then
-  echo "Flutter SDK not found. Installing Flutter..."
-  export FLUTTER_ROOT="$HOME/flutter"
-  export PATH="$FLUTTER_ROOT/bin:$PATH"
+# Clone Flutter (CORRECTED)
+git clone https://github.com/flutter/flutter.git --depth 1 -b stable
 
-  if [ ! -d "$FLUTTER_ROOT" ]; then
-    git clone https://github.com/flutter/flutter.git --depth 1 -b stable "$FLUTTER_ROOT"
-  fi
-fi
+# Add Flutter to PATH
+export PATH="$PATH:`pwd`/flutter/bin"
 
-# Ensure flutter is in PATH
-export PATH="$HOME/flutter/bin:$PATH"
+# Enable web support
+flutter config --enable-web
 
-flutter --version
-flutter config --no-analytics
-flutter precache --web
+# Get dependencies
 flutter pub get
 
-# ✅ ACTUALLY BUILD THE APP
-flutter build web --release
+# Build the web app
+echo "🔨 Building Flutter web app..."
+flutter build web --release --base-href "/"
 
-echo "✅ Build completed! Output is in build/web/"
+echo "✅ Build complete!"
