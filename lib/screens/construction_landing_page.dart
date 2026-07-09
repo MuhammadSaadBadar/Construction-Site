@@ -18,6 +18,14 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
 
   bool _isSending = false;
 
+  final GlobalKey _projectsKey = GlobalKey();
+  final GlobalKey _servicesKey = GlobalKey();
+  final GlobalKey _processKey = GlobalKey();
+  final GlobalKey _aboutKey = GlobalKey();
+
+  bool _isDesktopLike(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 600;
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -139,6 +147,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
+      key: _aboutKey,
       constraints: BoxConstraints(
         minHeight: MediaQuery.of(context).size.height,
       ),

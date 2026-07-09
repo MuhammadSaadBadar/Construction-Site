@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sufiangroup-construction.vercel.app/sitemap.xml
