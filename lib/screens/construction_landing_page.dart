@@ -22,6 +22,17 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
   final GlobalKey _servicesKey = GlobalKey();
   final GlobalKey _processKey = GlobalKey();
   final GlobalKey _aboutKey = GlobalKey();
+  final GlobalKey _contactKey = GlobalKey();
+
+  void _scrollToSection(GlobalKey key) {
+    if (key.currentContext != null) {
+      Scrollable.ensureVisible(
+        key.currentContext!,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
 
   bool _isDesktopLike(BuildContext context) =>
       MediaQuery.of(context).size.width >= 600;
@@ -147,7 +158,6 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Container(
-      key: _aboutKey,
       constraints: BoxConstraints(
         minHeight: MediaQuery.of(context).size.height,
       ),
@@ -170,7 +180,14 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
             ),
             child: Column(
               children: [
-                const NavigationBar(),
+                NavigationBar(
+                  onProjectsTap: () => _scrollToSection(_projectsKey),
+                  onServicesTap: () => _scrollToSection(_servicesKey),
+                  onProcessTap: () => _scrollToSection(_processKey),
+                  onAboutTap: () => _scrollToSection(_aboutKey),
+                  onContactTap: () => _scrollToSection(_contactKey),
+                ),
+                const SizedBox(height: 80),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
@@ -307,6 +324,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     final isTablet = _isTablet(context);
 
     return Container(
+      key: _aboutKey,
       color: const Color(0xFF121414),
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 16 : 24,
@@ -400,6 +418,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     ];
 
     return Container(
+      key: _servicesKey,
       width: double.infinity,
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -491,6 +510,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     ];
 
     return Container(
+      key: _projectsKey,
       color: const Color(0xFF121414),
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 16 : 24,
@@ -570,6 +590,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     ];
 
     return Container(
+      key: _processKey,
       constraints: BoxConstraints(minHeight: isMobile ? 400 : 600),
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -620,6 +641,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
     final isMobile = _isMobile(context);
 
     return Container(
+      key: _contactKey,
       color: const Color(0xFF0D0E0F),
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 16 : 24,
@@ -925,7 +947,20 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
 
 // IMPROVED: Better Navigation Bar with proper hamburger menu
 class NavigationBar extends StatefulWidget {
-  const NavigationBar({super.key});
+  final VoidCallback? onProjectsTap;
+  final VoidCallback? onServicesTap;
+  final VoidCallback? onProcessTap;
+  final VoidCallback? onAboutTap;
+  final VoidCallback? onContactTap;
+
+  const NavigationBar({
+    super.key,
+    this.onProjectsTap,
+    this.onServicesTap,
+    this.onProcessTap,
+    this.onAboutTap,
+    this.onContactTap,
+  });
 
   @override
   State<NavigationBar> createState() => _NavigationBarState();
@@ -974,34 +1009,37 @@ class _NavigationBarState extends State<NavigationBar> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        NavLink('Projects'),
-                        NavLink('Services'),
-                        NavLink('Process'),
-                        NavLink('About'),
+                      children: [
+                        NavLink('Projects', onTap: widget.onProjectsTap),
+                        NavLink('Services', onTap: widget.onServicesTap),
+                        NavLink('Process', onTap: widget.onProcessTap),
+                        NavLink('About', onTap: widget.onAboutTap),
                       ],
                     ),
                   ),
                 ),
               if (!isMobile)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: const Color(0xFFF95E14),
-                      width: 1.5,
+                InkWell(
+                  onTap: widget.onContactTap,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
                     ),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: const Text(
-                    'Contact Us',
-                    style: TextStyle(
-                      color: Color(0xFFF95E14),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: const Color(0xFFF95E14),
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: const Text(
+                      'Contact Us',
+                      style: TextStyle(
+                        color: Color(0xFFF95E14),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
@@ -1027,28 +1065,35 @@ class _NavigationBarState extends State<NavigationBar> {
                       ),
                       child: Column(
                         children: [
-                          _buildMobileNavItem('Projects'),
-                          _buildMobileNavItem('Services'),
-                          _buildMobileNavItem('Process'),
-                          _buildMobileNavItem('About'),
+                          _buildMobileNavItem('Projects', widget.onProjectsTap),
+                          _buildMobileNavItem('Services', widget.onServicesTap),
+                          _buildMobileNavItem('Process', widget.onProcessTap),
+                          _buildMobileNavItem('About', widget.onAboutTap),
                           const SizedBox(height: 16),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: const Color(0xFFF95E14),
-                                width: 1.5,
+                          InkWell(
+                            onTap: () {
+                              setState(() => _isMenuOpen = false);
+                              if (widget.onContactTap != null)
+                                widget.onContactTap!();
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: const Color(0xFFF95E14),
+                                  width: 1.5,
+                                ),
+                                borderRadius: BorderRadius.circular(6),
                               ),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: const Text(
-                              'Contact Us',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Color(0xFFF95E14),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
+                              child: const Text(
+                                'Contact Us',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Color(0xFFF95E14),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           ),
@@ -1064,12 +1109,13 @@ class _NavigationBarState extends State<NavigationBar> {
   }
 
   // IMPROVED: Better mobile nav item with tap effect
-  Widget _buildMobileNavItem(String title) {
+  Widget _buildMobileNavItem(String title, VoidCallback? onTap) {
     return InkWell(
       onTap: () {
         setState(() {
           _isMenuOpen = false;
         });
+        if (onTap != null) onTap();
       },
       child: Container(
         width: double.infinity,
@@ -1095,22 +1141,26 @@ class _NavigationBarState extends State<NavigationBar> {
 class NavLink extends StatelessWidget {
   final String title;
   final bool isMobile;
+  final VoidCallback? onTap;
 
-  const NavLink(this.title, {super.key, this.isMobile = false});
+  const NavLink(this.title, {super.key, this.isMobile = false, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        vertical: isMobile ? 12 : 0,
-        horizontal: isMobile ? 8 : 12,
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: const Color(0xFFE3BFB2),
-          fontSize: isMobile ? 16 : 14,
-          fontWeight: isMobile ? FontWeight.w500 : FontWeight.normal,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: isMobile ? 12 : 0,
+          horizontal: isMobile ? 8 : 12,
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: const Color(0xFFE3BFB2),
+            fontSize: isMobile ? 16 : 14,
+            fontWeight: isMobile ? FontWeight.w500 : FontWeight.normal,
+          ),
         ),
       ),
     );
@@ -1118,7 +1168,7 @@ class NavLink extends StatelessWidget {
 }
 
 // IMPROVED: Better ServiceCard with responsive padding
-class _ServiceCard extends StatelessWidget {
+class _ServiceCard extends StatefulWidget {
   const _ServiceCard({
     required this.icon,
     required this.title,
@@ -1130,50 +1180,79 @@ class _ServiceCard extends StatelessWidget {
   final String description;
 
   @override
+  State<_ServiceCard> createState() => _ServiceCardState();
+}
+
+class _ServiceCardState extends State<_ServiceCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
     final isTablet = MediaQuery.of(context).size.width < 900;
 
-    return Container(
-      padding: EdgeInsets.all(
-        isMobile
-            ? 20
-            : isTablet
-            ? 24
-            : 28,
-      ),
-      decoration: BoxDecoration(
-        color: const Color(0xFF121414),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.08)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: const Color(0xFFFFB59A), size: isMobile ? 36 : 40),
-          SizedBox(height: isMobile ? 16 : 20),
-          Text(
-            title,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: isMobile ? 18 : 20,
-              fontWeight: FontWeight.w600,
-            ),
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.all(
+          isMobile
+              ? 20
+              : isTablet
+              ? 24
+              : 28,
+        ),
+        decoration: BoxDecoration(
+          color: _isHovered ? const Color(0xFF1E2020) : const Color(0xFF121414),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: _isHovered
+                ? const Color(0xFFFFB59A).withOpacity(0.5)
+                : Colors.white.withOpacity(0.08),
           ),
-          SizedBox(height: isMobile ? 10 : 12),
-          Expanded(
-            child: Text(
-              description,
+          boxShadow: _isHovered
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFFFFB59A).withOpacity(0.1),
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ]
+              : [],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              widget.icon,
+              color: const Color(0xFFFFB59A),
+              size: isMobile ? 36 : 40,
+            ),
+            SizedBox(height: isMobile ? 16 : 20),
+            Text(
+              widget.title,
               style: TextStyle(
-                color: const Color(0xFFE3BFB2),
-                fontSize: isMobile ? 13 : 14,
-                height: 1.6,
+                color: Colors.white,
+                fontSize: isMobile ? 18 : 20,
+                fontWeight: FontWeight.w600,
               ),
-              overflow: TextOverflow.visible,
             ),
-          ),
-        ],
+            SizedBox(height: isMobile ? 10 : 12),
+            Expanded(
+              child: Text(
+                widget.description,
+                style: TextStyle(
+                  color: const Color(0xFFE3BFB2),
+                  fontSize: isMobile ? 13 : 14,
+                  height: 1.6,
+                ),
+                overflow: TextOverflow.visible,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1252,7 +1331,7 @@ class _ProcessStep extends StatelessWidget {
 }
 
 // IMPROVED: Better ProjectCard with minimum height
-class _ProjectCard extends StatelessWidget {
+class _ProjectCard extends StatefulWidget {
   const _ProjectCard({
     required this.title,
     required this.category,
@@ -1264,59 +1343,93 @@ class _ProjectCard extends StatelessWidget {
   final String image;
 
   @override
+  State<_ProjectCard> createState() => _ProjectCardState();
+}
+
+class _ProjectCardState extends State<_ProjectCard> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 600;
 
-    return Container(
-      // IMPROVED: Added minimum height to prevent cards from being too thin
-      constraints: BoxConstraints(minHeight: isMobile ? 200 : 250),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
-        image: DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
-      ),
-      child: Container(
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        constraints: BoxConstraints(minHeight: isMobile ? 200 : 250),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.transparent,
-              const Color(0xFF000000).withOpacity(0.7),
-            ],
+          border: Border.all(
+            color: _isHovered
+                ? const Color(0xFFF95E14).withOpacity(0.8)
+                : Colors.white.withOpacity(0.1),
+          ),
+          boxShadow: _isHovered
+              ? [
+                  BoxShadow(
+                    color: const Color(0xFFF95E14).withOpacity(0.2),
+                    blurRadius: 15,
+                    spreadRadius: 2,
+                  ),
+                ]
+              : [],
+          image: DecorationImage(
+            image: NetworkImage(widget.image),
+            fit: BoxFit.cover,
           ),
         ),
-        padding: EdgeInsets.all(isMobile ? 16 : 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF95E14),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                category,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: isMobile ? 11 : 12,
-                  fontWeight: FontWeight.w600,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Colors.transparent,
+                const Color(0xFF000000).withOpacity(_isHovered ? 0.9 : 0.7),
+              ],
+            ),
+          ),
+          padding: EdgeInsets.all(isMobile ? 16 : 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF95E14),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  widget.category,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isMobile ? 11 : 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: isMobile ? 8 : 10),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: isMobile ? 15 : 16,
-                fontWeight: FontWeight.w600,
+              SizedBox(height: isMobile ? 8 : 10),
+              AnimatedPadding(
+                duration: const Duration(milliseconds: 200),
+                padding: EdgeInsets.only(bottom: _isHovered ? 8.0 : 0.0),
+                child: Text(
+                  widget.title,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: isMobile ? 15 : 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
