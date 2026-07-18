@@ -215,7 +215,9 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                               style: TextStyle(
                                 fontSize: isMobile ? 54 : 120,
                                 fontWeight: FontWeight.w900,
-                                color: const Color(0xFFE5C07B), // Rich gold/yellow color
+                                color: const Color(
+                                  0xFFE5C07B,
+                                ), // Rich gold/yellow color
                                 height: 0.9,
                                 letterSpacing: -2.0,
                               ),
@@ -261,7 +263,10 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
-                                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    textStyle: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -291,7 +296,10 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
-                                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                                    textStyle: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                   child: const Text('View Our Projects'),
                                 ),
@@ -316,7 +324,10 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
-                                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  textStyle: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -342,7 +353,10 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(30),
                                   ),
-                                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  textStyle: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                                 child: const Text('View Our Projects'),
                               ),
@@ -868,7 +882,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                       Text(
                         'SUFIAN GROUP',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: const Color(0xFFE5C07B),
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
                         ),
