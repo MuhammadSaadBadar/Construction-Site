@@ -517,9 +517,9 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                 crossAxisCount: gridCount,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                // IMPROVED: Adjusted aspect ratio - more square on mobile, wider on desktop
+                // IMPROVED: Adjusted aspect ratio - much wider on mobile to reduce excessive empty height
                 childAspectRatio: isMobile
-                    ? 1.0 // Square cards on mobile
+                    ? 1.8 // Increased from 1.0 to drastically reduce card height on mobile
                     : gridCount == 2
                     ? 1.15
                     : 1.05,
@@ -599,9 +599,9 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
               crossAxisCount: gridCount,
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
-              // IMPROVED: Landscape aspect ratio for project cards, more square on mobile
+              // IMPROVED: Landscape aspect ratio for project cards, wider on mobile to reduce height
               childAspectRatio: isMobile
-                  ? 1.2 // 6:5 ratio on mobile - wider than tall
+                  ? 1.5 // Increased from 1.2 to reduce height on mobile
                   : gridCount == 2
                   ? 1.4
                   : 1.0,
