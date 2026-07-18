@@ -519,10 +519,10 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                 mainAxisSpacing: 12,
                 // IMPROVED: Adjusted aspect ratio - much wider on mobile to reduce excessive empty height
                 childAspectRatio: isMobile
-                    ? 1.8 // Increased from 1.0 to drastically reduce card height on mobile
+                    ? 2.8 // Higher value = shorter height relative to width
                     : gridCount == 2
-                    ? 1.15
-                    : 1.05,
+                    ? 1.8
+                    : 1.5,
               ),
               itemCount: services.length,
               itemBuilder: (context, index) => services[index],
@@ -587,7 +587,7 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
             'Showcase of our finest construction and renovation work.',
             style: TextStyle(
               color: const Color(0xFFE3BFB2),
-              fontSize: isMobile ? 14 : 18,
+              fontSize: isMobile ? 13 : 16,
             ),
           ),
           const SizedBox(height: 24),
@@ -600,11 +600,12 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               // IMPROVED: Landscape aspect ratio for project cards, wider on mobile to reduce height
+              // In _buildProjectsSection grid delegate
               childAspectRatio: isMobile
-                  ? 1.5 // Increased from 1.2 to reduce height on mobile
+                  ? 2.2 // Increased from 1.5
                   : gridCount == 2
-                  ? 1.4
-                  : 1.0,
+                  ? 1.8
+                  : 1.4,
             ),
             itemCount: projects.length,
             itemBuilder: (context, index) => projects[index],
@@ -1253,10 +1254,10 @@ class _ServiceCardState extends State<_ServiceCard> {
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.all(
           isMobile
-              ? 20
+              ? 14 // Reduced from 20
               : isTablet
-              ? 24
-              : 28,
+              ? 20
+              : 24,
         ),
         decoration: BoxDecoration(
           color: _isHovered ? const Color(0xFF1E2020) : const Color(0xFF121414),
@@ -1283,14 +1284,14 @@ class _ServiceCardState extends State<_ServiceCard> {
             Icon(
               widget.icon,
               color: const Color(0xFFFFB59A),
-              size: isMobile ? 36 : 40,
+              size: isMobile ? 28 : 36, // Reduced from 36
             ),
-            SizedBox(height: isMobile ? 16 : 20),
+            SizedBox(height: isMobile ? 10 : 16),
             Text(
               widget.title,
               style: TextStyle(
                 color: Colors.white,
-                fontSize: isMobile ? 18 : 20,
+                fontSize: isMobile ? 15 : 18,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -1300,7 +1301,7 @@ class _ServiceCardState extends State<_ServiceCard> {
                 widget.description,
                 style: TextStyle(
                   color: const Color(0xFFE3BFB2),
-                  fontSize: isMobile ? 13 : 14,
+                  fontSize: isMobile ? 12 : 14,
                   height: 1.6,
                 ),
                 overflow: TextOverflow.visible,
