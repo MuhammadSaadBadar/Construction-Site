@@ -196,16 +196,41 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'Crafting Excellence in Every Square Foot.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: isMobile ? 28 : 48,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                            height: 1.1,
-                            letterSpacing: -0.02,
-                          ),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'BUILD.',
+                              style: TextStyle(
+                                fontSize: isMobile ? 54 : 120,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                height: 0.9,
+                                letterSpacing: -2.0,
+                              ),
+                            ),
+                            Text(
+                              'INNOVATION.',
+                              style: TextStyle(
+                                fontSize: isMobile ? 54 : 120,
+                                fontWeight: FontWeight.w900,
+                                color: const Color(0xFFE5C07B), // Rich gold/yellow color
+                                height: 0.9,
+                                letterSpacing: -2.0,
+                              ),
+                            ),
+                            Text(
+                              'EXCELLENCE.',
+                              style: TextStyle(
+                                fontSize: isMobile ? 54 : 120,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                height: 0.9,
+                                letterSpacing: -2.0,
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 16),
                         Text(
