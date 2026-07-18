@@ -252,18 +252,25 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFF95E14),
-                                    foregroundColor: const Color(0xFF4F1700),
+                                    backgroundColor: const Color(0xFFE5C07B),
+                                    foregroundColor: const Color(0xFF111111),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 24,
-                                      vertical: 16,
+                                      vertical: 18,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
-                                    textStyle: const TextStyle(fontSize: 14),
+                                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
-                                  child: const Text('Get a Free Quote'),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Text('Get a Free Quote'),
+                                      SizedBox(width: 8),
+                                      Icon(Icons.arrow_outward, size: 18),
+                                    ],
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -274,16 +281,17 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: Colors.white,
                                     side: const BorderSide(
-                                      color: Color(0xFFAA8A7E),
+                                      color: Colors.white70,
+                                      width: 1.5,
                                     ),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 24,
-                                      vertical: 16,
+                                      vertical: 18,
                                     ),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(6),
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
-                                    textStyle: const TextStyle(fontSize: 14),
+                                    textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                   ),
                                   child: const Text('View Our Projects'),
                                 ),
@@ -292,41 +300,49 @@ class _ConstructionLandingPageState extends State<ConstructionLandingPage> {
                           )
                         else
                           Wrap(
-                            spacing: 12,
-                            runSpacing: 12,
+                            spacing: 16,
+                            runSpacing: 16,
                             alignment: WrapAlignment.center,
                             children: [
                               ElevatedButton(
                                 onPressed: () {},
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFF95E14),
-                                  foregroundColor: const Color(0xFF4F1700),
+                                  backgroundColor: const Color(0xFFE5C07B),
+                                  foregroundColor: const Color(0xFF111111),
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 16,
+                                    horizontal: 36,
+                                    vertical: 22,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
+                                    borderRadius: BorderRadius.circular(30),
                                   ),
-                                  textStyle: const TextStyle(fontSize: 16),
+                                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
-                                child: const Text('Get a Free Quote'),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: const [
+                                    Text('Get a Free Quote'),
+                                    SizedBox(width: 8),
+                                    Icon(Icons.arrow_outward, size: 20),
+                                  ],
+                                ),
                               ),
                               OutlinedButton(
                                 onPressed: () {},
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: Colors.white,
                                   side: const BorderSide(
-                                    color: Color(0xFFAA8A7E),
+                                    color: Colors.white70,
+                                    width: 1.5,
                                   ),
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 24,
-                                    vertical: 16,
+                                    horizontal: 36,
+                                    vertical: 22,
                                   ),
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
+                                    borderRadius: BorderRadius.circular(30),
                                   ),
-                                  textStyle: const TextStyle(fontSize: 16),
+                                  textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                                 ),
                                 child: const Text('View Our Projects'),
                               ),
